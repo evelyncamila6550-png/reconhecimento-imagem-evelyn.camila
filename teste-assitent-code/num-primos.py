@@ -4,7 +4,27 @@ TEST_VALUES = [1, 2, 3, 4, 5, 16, 17, 18, 19, 20]
 
 
 def is_prime(number: int) -> bool:
-    """Return True when the given integer is a prime number."""
+    """Verifica se um número inteiro é primo.
+    
+    Utiliza um algoritmo otimizado que verifica divisibilidade até a raiz
+    quadrada do número, reduzindo a complexidade computacional.
+    
+    Args:
+        number: Número inteiro a ser verificado.
+    
+    Returns:
+        True se o número é primo, False caso contrário.
+    
+    Exemplos:
+        >>> is_prime(2)
+        True
+        >>> is_prime(17)
+        True
+        >>> is_prime(4)
+        False
+        >>> is_prime(1)
+        False
+    """
     if number <= 1:
         return False
     if number <= 3:
