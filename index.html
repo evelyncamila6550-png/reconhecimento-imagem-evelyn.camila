@@ -1,286 +1,98 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Teachable Machine</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <style>
-    body {
-      background: #0f0f1a;
-      color: #e0e0f0;
-      font-family: 'Segoe UI', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .card-main {
-      background: #1a1a2e;
-      border: 1px solid #2e2e50;
-      border-radius: 20px;
-      padding: 2rem;
-      max-width: 480px;
-      width: 100%;
-      box-shadow: 0 0 40px rgba(100, 80, 255, 0.15);
-    }
-    .badge-title {
-      background: linear-gradient(135deg, #6c63ff, #a78bfa);
-      color: #fff;
-      font-size: 0.7rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      border-radius: 50px;
-      padding: 4px 14px;
-      display: inline-block;
-      margin-bottom: 0.5rem;
-    }
-    h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #f0f0ff;
-      margin-bottom: 0.25rem;
-    }
-    .subtitle {
-      color: #8888aa;
-      font-size: 0.85rem;
-      margin-bottom: 1.5rem;
-    }
-    #webcam-container {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 1.25rem;
-    }
-    #webcam-container canvas {
-      border-radius: 16px;
-      border: 2px solid #3a3a60;
-      width: 100%;
-      max-width: 320px;
-      height: auto;
-    }
-    .btn-start {
-      background: linear-gradient(135deg, #6c63ff, #a78bfa);
-      border: none;
-      border-radius: 50px;
-      padding: 0.6rem 2rem;
-      color: #fff;
-      font-weight: 600;
-      font-size: 0.95rem;
-      letter-spacing: 0.5px;
-      transition: all 0.25s ease;
-      width: 100%;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    .btn-start:hover {
-      background: linear-gradient(135deg, #5a52e0, #9170f0);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(108, 99, 255, 0.4);
-      color: #fff;
-    }
-    .btn-start:active {
-      transform: translateY(0);
-    }
-    .btn-start svg {
-      width: 18px;
-      height: 18px;
-    }
-    .label-item {
-      margin-bottom: 1rem;
-    }
-    .label-name {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.82rem;
-      color: #b0b0cc;
-      margin-bottom: 4px;
-    }
-    .label-name span.pct {
-      font-weight: 600;
-      color: #c0b8ff;
-    }
-    .progress {
-      height: 10px;
-      border-radius: 50px;
-      background: #2e2e50;
-    }
-    .progress-bar {
-      border-radius: 50px;
-      background: linear-gradient(90deg, #6c63ff, #a78bfa);
-      transition: width 0.25s ease;
-    }
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #444466;
-      display: inline-block;
-      margin-right: 6px;
-    }
-    .status-dot.active {
-      background: #6bffb8;
-      box-shadow: 0 0 6px #6bffb8;
-    }
-    .status-text {
-      font-size: 0.78rem;
-      color: #8888aa;
-    }
-    #placeholder-box {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 8px;
-      background: #12121f;
-      border: 2px dashed #3a3a60;
-      border-radius: 16px;
-      width: 100%;
-      max-width: 320px;
-      height: 200px;
-      margin: 0 auto 1.25rem;
-      color: #44446a;
-      font-size: 0.85rem;
-    }
-    #placeholder-box svg {
-      width: 36px;
-      height: 36px;
-      opacity: 0.4;
-    }
-  </style>
-</head>
-<body>
-  <div class="card-main">
-    <div class="badge-title">AI Vision</div>
-    <h1>Teachable Machine</h1>
-    <p class="subtitle">Modelo de reconhecimento de imagem em tempo real</p>
-
-    <div id="placeholder-box">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.07A1 1 0 0121 8.87V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2v-2.87a1 1 0 00-.447-.87L15 14M3 8l9 6 9-6"/>
-      </svg>
-      Câmera inativa
-    </div>
-
-    <div id="webcam-container" style="display:none;"></div>
-
-    <button class="btn-start" onclick="init()" id="btn-init">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.07A1 1 0 0121 8.87V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2v-2.87a1 1 0 00-.447-.87L15 14"/>
-      </svg>
-      Ativar câmera
-    </button>
-
-    <div class="d-flex align-items-center mb-3">
-      <span class="status-dot" id="status-dot"></span>
-      <span class="status-text" id="status-text">Aguardando inicialização...</span>
-    </div>
-
-    <div id="label-container"></div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
-  <script>
-    const URL = "https://teachablemachine.withgoogle.com/models/rVPsTL0eH/";
-    let model, webcam, labelContainer, maxPredictions;
-    let started = false;
-
-    async function init() {
-      if (started) return;
-      started = true;
-
-      const btn = document.getElementById("btn-init");
-      btn.disabled = true;
-      btn.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:18px;height:18px;animation:spin 1s linear infinite">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582M20 20v-5h-.582M4.582 9A8 8 0 0120 15M19.418 15A8 8 0 014 9"/>
-        </svg>
-        Carregando modelo...
-      `;
-
-      const style = document.createElement("style");
-      style.textContent = "@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }";
-      document.head.appendChild(style);
-
-      setStatus("Carregando modelo...", false);
-
-      try {
-        model = await tmImage.load(URL + "model.json", URL + "metadata.json");
-        maxPredictions = model.getTotalClasses();
-
-        const flip = true;
-        webcam = new tmImage.Webcam(320, 320, flip);
-        await webcam.setup();
-        await webcam.play();
-
-        document.getElementById("placeholder-box").style.display = "none";
-        const wc = document.getElementById("webcam-container");
-        wc.style.display = "flex";
-        wc.appendChild(webcam.canvas);
-
-        btn.innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:18px;height:18px">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-          </svg>
-          Câmera ativa
-        `;
-        btn.style.background = "linear-gradient(135deg, #1a7a4a, #2bbd78)";
-
-        setStatus("Reconhecimento ativo", true);
-
-        labelContainer = document.getElementById("label-container");
-        labelContainer.innerHTML = "";
-        for (let i = 0; i < maxPredictions; i++) {
-          const item = document.createElement("div");
-          item.className = "label-item";
-          item.innerHTML = `
-            <div class="label-name">
-              <span class="name-text">Classe ${i + 1}</span>
-              <span class="pct">0%</span>
-            </div>
-            <div class="progress">
-              <div class="progress-bar" role="progressbar" style="width: 0%"></div>
-            </div>
-          `;
-          labelContainer.appendChild(item);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
 
-        window.requestAnimationFrame(loop);
-      } catch (e) {
-        setStatus("Erro ao iniciar. Verifique permissões da câmera.", false);
-        btn.disabled = false;
-        btn.innerHTML = "Tentar novamente";
-        started = false;
-      }
-    }
+    <!-- Auth Container -->
+    <div id="auth-container" class="w-full max-w-md">
+        
+        <!-- Login Form -->
+        <div id="login-card" class="glass rounded-2xl p-8 transition-all duration-300">
+            <h2 class="text-3xl font-bold text-center mb-8 text-white tracking-tight">Login</h2>
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium mb-2 text-slate-300">E-mail</label>
+                    <input type="email" id="login-email" class="w-full bg-slate-900/50 border border-slate-700/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder-slate-500" placeholder="seu@email.com">
+                    <p id="login-email-error" class="text-red-400 text-sm mt-2 hidden"></p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2 text-slate-300">Senha</label>
+                    <input type="password" id="login-password" class="w-full bg-slate-900/50 border border-slate-700/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder-slate-500" placeholder="••••••••">
+                    <p id="login-password-error" class="text-red-400 text-sm mt-2 hidden"></p>
+                </div>
+                <div id="login-general-error" class="text-red-400 text-sm text-center font-medium hidden"></div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl px-4 py-3.5 transition-all duration-200 transform hover:-translate-y-0.5 shadow-lg shadow-indigo-500/25">Entrar</button>
+            </form>
+            <p class="mt-8 text-center text-slate-400 text-sm">
+                Não tem uma conta? <button id="show-register" class="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">Cadastre-se</button>
+            </p>
+        </div>
 
-    async function loop() {
-      webcam.update();
-      await predict();
-      window.requestAnimationFrame(loop);
-    }
+        <!-- Register Form -->
+        <div id="register-card" class="glass rounded-2xl p-8 hidden transition-all duration-300">
+            <h2 class="text-3xl font-bold text-center mb-8 text-white tracking-tight">Cadastro</h2>
+            <form id="register-form" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium mb-2 text-slate-300">Nome</label>
+                    <input type="text" id="register-name" class="w-full bg-slate-900/50 border border-slate-700/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder-slate-500" placeholder="Seu nome">
+                    <p id="register-name-error" class="text-red-400 text-sm mt-2 hidden"></p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2 text-slate-300">E-mail</label>
+                    <input type="email" id="register-email" class="w-full bg-slate-900/50 border border-slate-700/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder-slate-500" placeholder="seu@email.com">
+                    <p id="register-email-error" class="text-red-400 text-sm mt-2 hidden"></p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2 text-slate-300">Senha</label>
+                    <input type="password" id="register-password" class="w-full bg-slate-900/50 border border-slate-700/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder-slate-500" placeholder="••••••••">
+                    <p id="register-password-error" class="text-red-400 text-sm mt-2 hidden"></p>
+                </div>
+                <div id="register-general-error" class="text-red-400 text-sm text-center font-medium hidden"></div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl px-4 py-3.5 transition-all duration-200 transform hover:-translate-y-0.5 shadow-lg shadow-emerald-500/25">Criar Conta</button>
+            </form>
+            <p class="mt-8 text-center text-slate-400 text-sm">
+                Já tem uma conta? <button id="show-login" class="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">Faça login</button>
+            </p>
+        </div>
+    </div>
 
-    async function predict() {
-      const prediction = await model.predict(webcam.canvas);
-      const items = labelContainer.querySelectorAll(".label-item");
-      for (let i = 0; i < maxPredictions; i++) {
-        const pct = Math.round(prediction[i].probability * 100);
-        items[i].querySelector(".name-text").textContent = prediction[i].className;
-        items[i].querySelector(".pct").textContent = pct + "%";
-        items[i].querySelector(".progress-bar").style.width = pct + "%";
-      }
-    }
+    <!-- Main App Container -->
+    <div id="app-container" class="w-full max-w-4xl hidden animate-fade-in">
+        <header class="flex justify-between items-center mb-8 glass rounded-2xl p-6 shadow-xl">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight text-white">Minhas Tarefas</h1>
+                <p id="user-greeting" class="text-slate-400 mt-1 text-sm">Bem-vindo</p>
+            </div>
+            <button id="logout-btn" class="bg-slate-800/50 hover:bg-red-500/10 text-slate-300 hover:text-red-400 px-5 py-2.5 rounded-xl font-medium transition-all duration-200 border border-slate-700/50 hover:border-red-500/30">
+                Sair
+            </button>
+        </header>
 
-    function setStatus(msg, active) {
-      document.getElementById("status-text").textContent = msg;
-      const dot = document.getElementById("status-dot");
-      dot.className = "status-dot" + (active ? " active" : "");
-    }
-  </script>
+        <main class="glass rounded-2xl p-12 text-center shadow-xl">
+            <p class="text-slate-400 text-lg">Área de tarefas (Em construção...)</p>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
 </body>
 </html>
-```
